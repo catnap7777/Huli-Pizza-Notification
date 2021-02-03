@@ -21,14 +21,17 @@ class ViewController: UIViewController {
         UNUserNotificationCenter.current().getNotificationSettings { (settings) in
             let status = settings.authorizationStatus
             if status == .denied || status == .notDetermined {
-                DispatchQueue.main.async {
-                    self.accessDeniedAlert()
-                }
-//
-//                DispatchQueue.main.async(execute: {
+//** either one of these dispatchqueues works
+//                DispatchQueue.main.async {
 //                    self.accessDeniedAlert()
-//                })
+//                }
+                DispatchQueue.main.async(execute: {
+                    self.accessDeniedAlert()
+                })
                 return
+            }
+            if status == .provisional {
+                print("Karen, you are awesome")
             }
             self.introNotification()
         }
@@ -39,10 +42,10 @@ class ViewController: UIViewController {
         UNUserNotificationCenter.current().getNotificationSettings { (settings) in
             let status = settings.authorizationStatus
             if status == .denied || status == .notDetermined {
+//** either one of these dispatchqueues works
                 DispatchQueue.main.async {
                     self.accessDeniedAlert()
                 }
-//
 //                DispatchQueue.main.async(execute: {
 //                    self.accessDeniedAlert()
 //                })
