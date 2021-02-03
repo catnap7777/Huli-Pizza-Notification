@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import UserNotifications
 
 // a global constant
 let pizzaSteps = ["Make pizza", "Roll Dough", "Add Sauce", "Add Cheese", "Add Ingredients", "Bake", "Done"]
@@ -16,10 +17,39 @@ class ViewController: UIViewController {
     var counter = 0
    
     @IBAction func schedulePizza(_ sender: UIButton) {
+        
+        UNUserNotificationCenter.current().getNotificationSettings { (settings) in
+            let status = settings.authorizationStatus
+            if status == .denied || status == .notDetermined {
+                DispatchQueue.main.async {
+                    self.accessDeniedAlert()
+                }
+//
+//                DispatchQueue.main.async(execute: {
+//                    self.accessDeniedAlert()
+//                })
+                return
+            }
+            self.introNotification()
+        }
     }
     
     
     @IBAction func makePizza(_ sender: UIButton) {
+        UNUserNotificationCenter.current().getNotificationSettings { (settings) in
+            let status = settings.authorizationStatus
+            if status == .denied || status == .notDetermined {
+                DispatchQueue.main.async {
+                    self.accessDeniedAlert()
+                }
+//
+//                DispatchQueue.main.async(execute: {
+//                    self.accessDeniedAlert()
+//                })
+                return
+            }
+            self.introNotification()
+        }
     }
     
     
