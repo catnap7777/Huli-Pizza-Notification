@@ -31,7 +31,7 @@ class ViewController: UIViewController {
                 return
             }
             if status == .provisional {
-                print("Karen, you are awesome")
+                print("Karen, you have provisional set")
             }
             //.. this was called in lesson 1 but below are new ways:
             //..   #1 uses static notification content - for scheduling a pizza
@@ -43,9 +43,11 @@ class ViewController: UIViewController {
             //..  which is ok if you don't have many of these... but it might
             //..  be better to use dynamic notification content if you do (it's
             //..  more flexible
+            self.counter += 1
             let content = UNMutableNotificationContent()
-            content.title = "A Scheduled Pizza"
-            content.body = "Time to make a pizza!"
+            content.title = "KAM - A Scheduled Pizza"
+            content.body = "Time to make a pizza! \(self.counter)"
+            content.badge = self.counter as NSNumber
             //.. #2
             //.. calls the function we created notificationContent to
             //.. dynamically set content
@@ -96,7 +98,9 @@ class ViewController: UIViewController {
             //.. #2
             //.. calls the function we created notificationContent to
             //.. dynamically set content
-            let content = self.notificationContent(title: "A timed pizza step", body: "Making Pizza!!!")
+            self.counter += 1
+            let content = self.notificationContent(title: "KAM - A timed pizza step", body: "Making Pizza!!! \(self.counter)")
+            content.badge = self.counter as NSNumber
             
             //.. time interval trigger
             let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 10.0, repeats: false)

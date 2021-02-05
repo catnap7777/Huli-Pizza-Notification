@@ -9,8 +9,18 @@
 import UIKit
 import UserNotifications
 
-class NotificationCenterDelegate: NSObject {
+//..*****************************************************************
+//.. THIS CLASS/SWIFT FILE NEEDED FOR IN-APP NOTIFICATIONS; THERE ARE CHANGES
+//..    IN APPDELEGATE.SWIFT NEEDED ALSO
+//.. add UNUserNotificationCenterDelegate here; needed for in-app notifications ***kam
+class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
    
+    //..*****************************************************************
+    //.. function needed for IN-APP notifications.. also need to change AppDelegate.swift file ***kam
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert, .badge, .sound])
+        
+    }
     
     //MARK: - Support Methods
     let surferBullet = "🏄🏽‍♀️ "
