@@ -10,17 +10,32 @@ import UIKit
 import UserNotifications
 
 @UIApplicationMain
+
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    
+    //..*****************************************************************
+    //.. needed for IN-APP notifications; also need to create/change
+    //..   NotificationCenterDelegate.swift ***kam
+    let ncDelegate = NotificationCenterDelegate()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge, .provisional]) { (granted, error) in
+        //.. using .provisional below
+//        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge, .provisional]) { (granted, error) in
+//            self.printError(error, location: "Request Authorization")
+//        }
+        //.. not using .provisional below
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
             self.printError(error, location: "Request Authorization")
         }
+        
+        //..*****************************************************************
+        //.. needed for IN-APP notifications; also need to create/change
+        //..   NotificationCenterDelegate.swift ***kam
+        UNUserNotificationCenter.current().delegate = ncDelegate
         
         
         return true
