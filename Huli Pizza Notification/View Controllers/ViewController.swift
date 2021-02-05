@@ -33,7 +33,35 @@ class ViewController: UIViewController {
             if status == .provisional {
                 print("Karen, you are awesome")
             }
-            self.introNotification()
+            //.. this was called in lesson 1 but below are new ways:
+            //..   #1 uses static notification content - for scheduling a pizza
+            //..   #2 uses dynamic notification content - for making a pizza (below)
+            //self.introNotification()
+            
+            //.. #1
+            //.. putting this in here makes this static notification content,
+            //..  which is ok if you don't have many of these... but it might
+            //..  be better to use dynamic notification content if you do (it's
+            //..  more flexible
+            let content = UNMutableNotificationContent()
+            content.title = "A Scheduled Pizza"
+            content.body = "Time to make a pizza!"
+            //.. #2
+            //.. calls the function we created notificationContent to
+            //.. dynamically set content
+//            let content = self.notificationContent(title: "A timed pizza step", body: "Making Pizza!!!")
+            
+            var dateComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: Date())
+            //.. instead of setting a particular date to trigger, we're just
+            //..  going to set 15 seconds into the future for this lesson/class
+            dateComponents.second = dateComponents.second! + 15
+            //.. calendar trigger
+            let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
+            //.. schedule notification
+            let identifier = "message.scheduled"
+            self.addNotification(trigger: trigger, content: content, identifier: identifier)
+//
+            
         }
     }
     
@@ -51,10 +79,55 @@ class ViewController: UIViewController {
 //                })
                 return
             }
-            self.introNotification()
+            //.. this was called in lesson 1 but below are new ways:
+            //..   #1 uses static notification content - for scheduling a pizza (above)
+            //..   #2 uses dynamic notification content - for making a pizza
+            //self.introNotification()
+            
+            //.. #1
+            //.. putting this in here makes this static notification content,
+            //..  which is ok if you don't have many of these... but it might
+            //..  be better to use dynamic notification content if you do (it's
+            //..  more flexible
+//            let content = UNMutableNotificationContent()
+//            content.title = "A Scheduled Pizza"
+//            content.body = "Time to make a pizza!"
+            
+            //.. #2
+            //.. calls the function we created notificationContent to
+            //.. dynamically set content
+            let content = self.notificationContent(title: "A timed pizza step", body: "Making Pizza!!!")
+            
+            //.. time interval trigger
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 10.0, repeats: false)
+            //.. schedule notification
+            let identifier = "message.pizza"
+            self.addNotification(trigger: trigger, content: content, identifier: identifier)
+
         }
     }
     
+    //.. function to schedule notifications (comprised of creating request and adding it
+    //..   to notification center
+    func addNotification(trigger: UNNotificationTrigger, content: UNMutableNotificationContent, identifier: String) {
+        
+        //.. create request
+        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
+        //.. add it to notification center
+        UNUserNotificationCenter.current().add(request) { (error) in
+            self.printError(error, location: "Add request for identifier: " + identifier)
+        }
+    }
+    
+    //..used for dynamic notification content
+    func notificationContent(title: String, body: String) -> UNMutableNotificationContent {
+        
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = body
+        content.userInfo = ["step":0]
+        return content
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,7 +144,12 @@ class ViewController: UIViewController {
         }
     }
     
-    //A sample local notification for testing
+    //A sample local notification for testing - from lesson 1
+    //..  Notice the 4 parts - content, trigger, request, schedule
+    //..     Since this function is not used in lesson 2 (because we use
+    //..      static and dynamic content settings) these parts/steps are
+    //..      incorporated in those functions above instead - in schedulePizza,
+    //..      makePizza, and notificationContent functions
     func introNotification(){
         // a Quick local notification.
         let time = 15.0
