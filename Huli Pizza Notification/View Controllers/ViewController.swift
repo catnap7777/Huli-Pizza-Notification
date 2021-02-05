@@ -15,6 +15,9 @@ let pizzaSteps = ["Make pizza", "Roll Dough", "Add Sauce", "Add Cheese", "Add In
 
 class ViewController: UIViewController {
     var counter = 0
+    //.. just trying out separate counters
+//    var spcounter = 0
+//    var mpcounter = 0
    
     @IBAction func schedulePizza(_ sender: UIButton) {
         
@@ -44,6 +47,7 @@ class ViewController: UIViewController {
             //..  be better to use dynamic notification content if you do (it's
             //..  more flexible
             self.counter += 1
+            //self.spcounter += 1
             let content = UNMutableNotificationContent()
             content.title = "KAM - A Scheduled Pizza"
             content.body = "Time to make a pizza! \(self.counter)"
@@ -56,7 +60,7 @@ class ViewController: UIViewController {
             var dateComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: Date())
             //.. instead of setting a particular date to trigger, we're just
             //..  going to set 15 seconds into the future for this lesson/class
-            dateComponents.second = dateComponents.second! + 15
+            dateComponents.second = dateComponents.second! + 2
             //.. calendar trigger
             let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
             //.. schedule notification
@@ -99,11 +103,12 @@ class ViewController: UIViewController {
             //.. calls the function we created notificationContent to
             //.. dynamically set content
             self.counter += 1
+            //self.mpcounter += 1
             let content = self.notificationContent(title: "KAM - A timed pizza step", body: "Making Pizza!!! \(self.counter)")
             content.badge = self.counter as NSNumber
             
             //.. time interval trigger
-            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 10.0, repeats: false)
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 2.0, repeats: false)
             //.. schedule notification
             let identifier = "message.pizza"
             self.addNotification(trigger: trigger, content: content, identifier: identifier)
@@ -137,7 +142,16 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         navigationController?.isNavigationBarHidden = true
+//        //.. to maybe reset counters after coming back to VC
+//        mpcounter = 0
+//        spcounter = 0
     }
+    
+//.. to maybe reset counters after coming back to VC
+//    override func viewWillAppear(_ animated: Bool) {
+//        mpcounter = 0
+//        spcounter = 0
+//    }
 
     //MARK: - Support Methods
     
