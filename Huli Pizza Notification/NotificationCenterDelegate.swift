@@ -22,6 +22,31 @@ class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
         
     }
     
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        
+        let action = response.actionIdentifier
+        let request = response.notification.request
+        let content = request.content.mutableCopy() as! UNMutableNotificationContent
+        
+        if action == "cancel" {
+            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [request.identifier])
+        }
+        
+        if action == "snooze" {
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5.0, repeats: false)
+            let request = UNNotificationRequest(identifier: request.identifier, content: request.content, trigger: trigger)
+            UNUserNotificationCenter.current().add(request) { (error) in
+                self.printError(error, location: "Snooze Action")
+            }
+        }
+        
+        if action == "next.step" {
+            
+        }
+        
+        completionHandler()
+    }
+    
     //MARK: - Support Methods
     let surferBullet = "🏄🏽‍♀️ "
     // A function to print errors to the console
