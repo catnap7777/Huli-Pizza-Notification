@@ -22,22 +22,75 @@ class ManageNotificationsViewController: UIViewController{
     }
     
     @IBAction func viewPendingNotifications(_ sender: UIButton) {
+        UNUserNotificationCenter.current().getPendingNotificationRequests {
+            (requests) in
+            self.printRequest(count: requests.count, type: "pending")
+            for request in requests {
+                self.printConsoleView("\(request.identifier):\(request.content.body)\n")
+            }
+        }
         
     }
     
     @IBAction func viewDeliveredNotifications(_ sender: UIButton) {
+        UNUserNotificationCenter.current().getDeliveredNotifications {
+            (notifications) in
+            self.printRequest(count: notifications.count, type: "Delivered")
+            for notification in notifications {
+                self.printConsoleView("\(notification.request.identifier):\(notification.request.content.body)\n")
+            }
+            
+        }
        
     }
     
     @IBAction func removeAllNotifications(_ sender: UITapGestureRecognizer) {
-       
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
     }
     
     @IBAction func removeNotification(_ sender: UIButton) {
-        
+        UNUserNotificationCenter.current().getPendingNotificationRequests { (requests) in
+            if let request = requests.first(where: { request -> Bool in
+                request.trigger?.repeats == true}) {
+                UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [request.identifier])
+            }
+        }
     }
     
     @IBAction func nextPizzaStep(_ sender: UIButton) {
+        UNUserNotificationCenter.current().getPendingNotificationRequests { (requests) in
+            for request in requests {
+                if request.identifier.hasPrefix("message.pizza") {
+                    guard let content =  self.updatePizzaContent(request: request) else {
+                        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [request.identifier])
+                        return
+                    }
+                    self.addNotification(trigger: request.trigger, content: content, identifier: request.identifier )
+                    return
+                }
+            }
+        }
+        
+        
+    }
+    
+    func updatePizzaContent(request: UNNotificationRequest) -> UNMutableNotificationContent! {
+        if let stepNumber = request.content.userInfo["step"] as? Int {
+//            let newStepNumber = (stepNumber + 1) % pizzaSteps.count
+            let newStepNumber = (stepNumber + 1)
+            let updatedContent = request.content.mutableCopy() as! UNMutableNotificationContent
+            if newStepNumber >= pizzaSteps.count {return nil}
+            //.. the next lines basically stop the grouping for the last step - the "done" pizzas
+            if newStepNumber == pizzaSteps.count - 1 {
+                updatedContent.threadIdentifier = request.identifier
+                updatedContent.categoryIdentifier = "snooze.category"
+            }
+            updatedContent.body = pizzaSteps[newStepNumber]
+            updatedContent.userInfo["step"] = newStepNumber
+            return updatedContent
+        }
+        return request.content as? UNMutableNotificationContent
         
     }
     

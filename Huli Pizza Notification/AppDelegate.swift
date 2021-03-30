@@ -19,6 +19,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     //.. needed for IN-APP notifications; also need to create/change
     //..   NotificationCenterDelegate.swift ***kam
     let ncDelegate = NotificationCenterDelegate()
+    
+    func setCategories() {
+        
+        let nextStepAction = UNNotificationAction(identifier: "next.step", title: "Next", options: [])
+        let snoozeAction = UNNotificationAction(identifier: "snooze", title: "Snooze", options: [])
+        let cancelAction = UNNotificationAction(identifier: "cancel", title: "Cancel Pizza", options: [.destructive])
+        
+        let pizzaStepsCategory = UNNotificationCategory(identifier: "pizza.steps.category", actions: [], intentIdentifiers: [], options: [])
+        let snoozeCategory = UNNotificationCategory(identifier: "snooze.category", actions: [], intentIdentifiers: [], options: [])
+        
+        UNUserNotificationCenter.current().setNotificationCategories([pizzaStepsCategory, snoozeCategory])
+    }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -36,7 +48,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //.. needed for IN-APP notifications; also need to create/change
         //..   NotificationCenterDelegate.swift ***kam
         UNUserNotificationCenter.current().delegate = ncDelegate
-        
+        setCategories()
         
         return true
     }

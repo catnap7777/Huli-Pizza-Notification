@@ -51,7 +51,9 @@ class ViewController: UIViewController {
             let content = UNMutableNotificationContent()
             content.title = "KAM - A Scheduled Pizza"
             content.body = "Time to make a pizza! \(self.counter)"
+            content.threadIdentifier = "scheduled"
             content.badge = self.counter as NSNumber
+            content.categoryIdentifier = "snooze.category"
             //.. #2
             //.. calls the function we created notificationContent to
             //.. dynamically set content
@@ -60,18 +62,19 @@ class ViewController: UIViewController {
             var dateComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: Date())
             //.. instead of setting a particular date to trigger, we're just
             //..  going to set 15 seconds into the future for this lesson/class
-            dateComponents.second = dateComponents.second! + 2
+            dateComponents.second = dateComponents.second! + 5
             //.. calendar trigger
             let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
             //.. schedule notification
-            let identifier = "message.scheduled"
+            //.. use Date.timeIntervalSinceReferenceDate to see the number of seconds
+            let identifier = "message.scheduled.\(Date.timeIntervalSinceReferenceDate)"
             self.addNotification(trigger: trigger, content: content, identifier: identifier)
 //
             
         }
     }
     
-    
+    var pizzaNumber = 0
     @IBAction func makePizza(_ sender: UIButton) {
         UNUserNotificationCenter.current().getNotificationSettings { (settings) in
             let status = settings.authorizationStatus
@@ -105,12 +108,18 @@ class ViewController: UIViewController {
             self.counter += 1
             //self.mpcounter += 1
             let content = self.notificationContent(title: "KAM - A timed pizza step", body: "Making Pizza!!! \(self.counter)")
+            self.pizzaNumber += 1
+            content.subtitle = "Pizza #\(self.pizzaNumber)"
+            content.threadIdentifier = "make.pizza"
             content.badge = self.counter as NSNumber
+            content.categoryIdentifier = "pizza.steps.category"
             
             //.. time interval trigger
-            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 2.0, repeats: false)
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 7.0, repeats: false)
+            //let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 60.0, repeats: true)
             //.. schedule notification
-            let identifier = "message.pizza"
+            //.. with unique pizzaNumber as incremented above, you'll get multiple notification msgs, not just one
+            let identifier = "message.pizza.\(self.pizzaNumber)"
             self.addNotification(trigger: trigger, content: content, identifier: identifier)
 
         }
