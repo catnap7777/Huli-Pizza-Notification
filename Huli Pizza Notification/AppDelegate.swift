@@ -20,16 +20,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     //..   NotificationCenterDelegate.swift ***kam
     let ncDelegate = NotificationCenterDelegate()
     
-    func setCategories() {
+    func setCategories(){
+        let nextStepAction = UNNotificationAction(identifier: "next.step", title: "Next", options:  [])
+        let snoozeAction = UNNotificationAction(identifier: "snooze", title: "Snooze", options:  [])
+        let cancelAction = UNNotificationAction(identifier: "cancel", title: "Cancel Pizza", options:  [.destructive])
+        let textInputAction = UNTextInputNotificationAction(identifier: "text.input", title: "Comments", options: [], textInputButtonTitle: "Send", textInputPlaceholder: "Comments here please")
+        let pizzaStepsCategory = UNNotificationCategory(identifier: "pizza.steps.category", actions: [nextStepAction,snoozeAction,textInputAction,cancelAction], intentIdentifiers: [], options: [])
+        let snoozeCategory = UNNotificationCategory(identifier: "snooze.category", actions: [snoozeAction], intentIdentifiers: [], options: [])
+        UNUserNotificationCenter.current().setNotificationCategories([pizzaStepsCategory,snoozeCategory])
         
-        let nextStepAction = UNNotificationAction(identifier: "next.step", title: "Next", options: [])
-        let snoozeAction = UNNotificationAction(identifier: "snooze", title: "Snooze", options: [])
-        let cancelAction = UNNotificationAction(identifier: "cancel", title: "Cancel Pizza", options: [.destructive])
-        
-        let pizzaStepsCategory = UNNotificationCategory(identifier: "pizza.steps.category", actions: [], intentIdentifiers: [], options: [])
-        let snoozeCategory = UNNotificationCategory(identifier: "snooze.category", actions: [], intentIdentifiers: [], options: [])
-        
-        UNUserNotificationCenter.current().setNotificationCategories([pizzaStepsCategory, snoozeCategory])
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {

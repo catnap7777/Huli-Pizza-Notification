@@ -23,24 +23,29 @@ class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        
         let action = response.actionIdentifier
         let request = response.notification.request
         let content = request.content.mutableCopy() as! UNMutableNotificationContent
+        if action == "text.input"{
+            let textResponse = response as! UNTextInputNotificationResponse
+            let newContent = request.content.mutableCopy() as! UNMutableNotificationContent
+            newContent.subtitle = textResponse.userText
+            let request = UNNotificationRequest(identifier: request.identifier, content: newContent, trigger: request.trigger)
+            UNUserNotificationCenter.current().add(request) { (error) in
+                self.printError(error, location: "Text Input action")
+            }        }
         
-        if action == "cancel" {
+        if action == "cancel"{
             UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [request.identifier])
         }
-        
-        if action == "snooze" {
+        if action == "snooze"{
             let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5.0, repeats: false)
             let request = UNNotificationRequest(identifier: request.identifier, content: request.content, trigger: trigger)
             UNUserNotificationCenter.current().add(request) { (error) in
                 self.printError(error, location: "Snooze Action")
             }
         }
-        
-        if action == "next.step" {
+        if action == "next.step"{
             guard var step = content.userInfo["step"] as? Int else {return}
             step += 1
             if step < pizzaSteps.count {
@@ -48,14 +53,15 @@ class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
                 content.userInfo["step"] = step
                 let request = UNNotificationRequest(identifier: request.identifier, content: content, trigger: request.trigger)
                 UNUserNotificationCenter.current().add(request) { (error) in
-                    self.printError(error, location: "Next Step Action")
+                    self.printError(error, location: "Next Step action")
                 }
             } else {
-                UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [request.identifier])
+            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [request.identifier])
             }
         }
         completionHandler()
     }
+    
     
     //MARK: - Support Methods
     let surferBullet = "🏄🏽‍♀️ "
