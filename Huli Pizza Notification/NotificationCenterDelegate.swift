@@ -41,9 +41,19 @@ class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelegate {
         }
         
         if action == "next.step" {
-            
+            guard var step = content.userInfo["step"] as? Int else {return}
+            step += 1
+            if step < pizzaSteps.count {
+                content.body = pizzaSteps[step]
+                content.userInfo["step"] = step
+                let request = UNNotificationRequest(identifier: request.identifier, content: content, trigger: request.trigger)
+                UNUserNotificationCenter.current().add(request) { (error) in
+                    self.printError(error, location: "Next Step Action")
+                }
+            } else {
+                UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [request.identifier])
+            }
         }
-        
         completionHandler()
     }
     
